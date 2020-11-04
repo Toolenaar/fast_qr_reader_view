@@ -5,6 +5,7 @@ import 'package:fast_qr_reader_view/fast_qr_reader_view.dart';
 List<CameraDescription> cameras;
 
 Future<Null> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   // Fetch the available cameras before initializing the app.
   try {
     cameras = await availableCameras();
@@ -14,8 +15,7 @@ Future<Null> main() async {
   runApp(new MyApp());
 }
 
-void logError(String code, String message) =>
-    print('Error: $code\nError Message: $message');
+void logError(String code, String message) => print('Error: $code\nError Message: $message');
 
 class MyApp extends StatefulWidget {
   @override
@@ -40,15 +40,15 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
       this.setState(() {});
     });
     animationController.forward();
-    verticalPosition = Tween<double>(begin: 0.0, end: 300.0).animate(
-        CurvedAnimation(parent: animationController, curve: Curves.linear))
-      ..addStatusListener((state) {
-        if (state == AnimationStatus.completed) {
-          animationController.reverse();
-        } else if (state == AnimationStatus.dismissed) {
-          animationController.forward();
-        }
-      });
+    verticalPosition = Tween<double>(begin: 0.0, end: 300.0)
+        .animate(CurvedAnimation(parent: animationController, curve: Curves.linear))
+          ..addStatusListener((state) {
+            if (state == AnimationStatus.completed) {
+              animationController.reverse();
+            } else if (state == AnimationStatus.dismissed) {
+              animationController.forward();
+            }
+          });
 
     // pick the first available camera
     onNewCameraSelected(cameras[0]);
@@ -67,8 +67,7 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
         floatingActionButton: FloatingActionButton(
           child: new Icon(Icons.check),
           onPressed: () {
-            showInSnackBar(
-                "Just proving you can put anything on top of the scanner");
+            showInSnackBar("Just proving you can put anything on top of the scanner");
           },
         ),
         body: Stack(
@@ -88,8 +87,7 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
                     height: 300.0,
                     width: 300.0,
                     child: Container(
-                      decoration: BoxDecoration(
-                          border: Border.all(color: Colors.red, width: 2.0)),
+                      decoration: BoxDecoration(border: Border.all(color: Colors.red, width: 2.0)),
                     ),
                   ),
                   Positioned(
@@ -139,8 +137,8 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
     if (controller != null) {
       await controller.dispose();
     }
-    controller = new QRReaderController(cameraDescription, ResolutionPreset.low,
-        [CodeFormat.qr, CodeFormat.pdf417], onCodeRead);
+    controller =
+        new QRReaderController(cameraDescription, ResolutionPreset.low, [CodeFormat.qr, CodeFormat.pdf417], onCodeRead);
 
     // If the controller is updated then update the UI.
     controller.addListener(() {
@@ -164,7 +162,6 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
   }
 
   void showInSnackBar(String message) {
-    _scaffoldKey.currentState
-        .showSnackBar(new SnackBar(content: new Text(message)));
+    _scaffoldKey.currentState.showSnackBar(new SnackBar(content: new Text(message)));
   }
 }
